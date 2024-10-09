@@ -1,0 +1,33 @@
+import requests
+import json
+
+# Replace with your GitHub repository details
+REPO_OWNER = 'shrishri'
+REPO_NAME = 'Automated_testing'
+BRANCH = 'main'  # Change to your desired branch if needed
+GITHUB_TOKEN = 'your_github_token'  # Optional: GitHub token for private repos
+
+def check_for_new_commits():
+    # GitHub API URL for commits
+    url = f'https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/commits?sha={BRANCH}'
+    
+    headers = {}
+    if GITHUB_TOKEN:
+        headers['Authorization'] = f'token {GITHUB_TOKEN}'
+    
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        commits = response.json()
+        if commits:
+            latest_commit = commits[0]
+            print(f"Latest commit: {latest_commit['commit']['message']}")
+            print(f"Commit URL: {latest_commit['html_url']}")
+            print(f"Committed by: {latest_commit['commit']['author']['name']} on {latest_commit['commit']['author']['date']}")
+        else:
+            print("No commits found in the specified branch.")
+    else:
+        print(f"Failed to fetch commits: {response.status_code} - {response.text}")
+
+if __name__ == "__main__":
+    check_for_new_commits()
